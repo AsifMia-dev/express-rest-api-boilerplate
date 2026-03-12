@@ -2,24 +2,16 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const express = require('express');
-
 const app = express();
 
-const morgan = require('morgan');
+const middleware = require('./middleware');
+const route = require('./routes');
+const {notFoundHandler,errorHandler} = require('./error');
 
-const cors = require('cors');
+app.use(middleware);
+//Router itself a middleware , so we can use it with app.use() method
+app.use(route);
+app.use(notFoundHandler);
+app.use(errorHandler);
 
-app.use(
-      [
-            morgan('dev'),
-            cors(),
-            express.json(),
-      ]
-)
-
-
-app.get('/health', (_req,res)=>{
-      return res.status(200).json({status: 'ok'});
-})
-
- module.exports = app;
+module.exports = app;
